@@ -126,7 +126,7 @@ public class SProfile {
 
     tJerk = m_constraints.maxAcceleration/m_constraints.maxJerk;
     tAccel = m_constraints.maxVelocity/m_constraints.maxAcceleration - tJerk;
-    tVelocity = 0;
+    tVelocity = (m_goal.position - (2 * t3(t3).position)) / m_constraints.maxVelocity;
 
     t1 = tJerk;
     t2 = tAccel;
@@ -159,39 +159,39 @@ public class SProfile {
 
     if (t < t1) {
       result.position = t1(t).position + m_initial.position;
-      result.velocity = t1(t).velocity + m_initial.velocity;
-      result.acceleration = t1(t).acceleration + m_initial.acceleration;
-      result.jerk = t1(t).jerk + m_initial.jerk;
+      result.velocity = t1(t).velocity;
+      result.acceleration = t1(t).acceleration;
+      result.jerk = t1(t).jerk;
     } else if (t < t2) {
       result.position = t2(t).position + m_initial.position;
-      result.velocity = t2(t).velocity + m_initial.velocity;
-      result.acceleration = t2(t).acceleration + m_initial.acceleration;
-      result.jerk = t2(t).jerk + m_initial.jerk;
+      result.velocity = t2(t).velocity;
+      result.acceleration = t2(t).acceleration;
+      result.jerk = t2(t).jerk;
     } else if (t < t3) {
       result.position = t3(t).position + m_initial.position;
-      result.velocity = t3(t).velocity + m_initial.velocity;
-      result.acceleration = t3(t).acceleration + m_initial.acceleration;
-      result.jerk = t3(t).jerk + m_initial.jerk;     
+      result.velocity = t3(t).velocity;
+      result.acceleration = t3(t).acceleration;
+      result.jerk = t3(t).jerk;     
     } else if (t < t4) {
       result.position = t4(t).position + m_initial.position;
-      result.velocity = t4(t).velocity + m_initial.velocity;
-      result.acceleration = t4(t).acceleration + m_initial.acceleration;
-      result.jerk = t4(t).jerk + m_initial.jerk;
+      result.velocity = t4(t).velocity;
+      result.acceleration = t4(t).acceleration;
+      result.jerk = t4(t).jerk;
     } else if (t < t5) {
       result.position = t5(t).position + m_initial.position;
-      result.velocity = t5(t).velocity + m_initial.velocity;
-      result.acceleration = t5(t).acceleration + m_initial.acceleration;
-      result.jerk = t5(t).jerk + m_initial.jerk;
+      result.velocity = t5(t).velocity;
+      result.acceleration = t5(t).acceleration;
+      result.jerk = t5(t).jerk;
     } else if (t < t6) {
       result.position = t6(t).position + m_initial.position;
-      result.velocity = t6(t).velocity + m_initial.velocity;
-      result.acceleration = t6(t).acceleration + m_initial.acceleration;
-      result.jerk = t6(t).jerk + m_initial.jerk;
+      result.velocity = t6(t).velocity;
+      result.acceleration = t6(t).acceleration;
+      result.jerk = t6(t).jerk;
     } else if (t < t7) {
       result.position = t7(t).position + m_initial.position;
-      result.velocity = t7(t).velocity + m_initial.velocity;
-      result.acceleration = t7(t).acceleration + m_initial.acceleration;
-      result.jerk = t7(t).jerk + m_initial.jerk;
+      result.velocity = t7(t).velocity;
+      result.acceleration = t7(t).acceleration;
+      result.jerk = t7(t).jerk;
     }
 
     return direct(result);

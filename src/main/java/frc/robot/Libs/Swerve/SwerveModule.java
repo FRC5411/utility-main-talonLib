@@ -1,13 +1,12 @@
-package frc.robot.Swerve;
+package frc.robot.Libs.Swerve;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-
-import frc.robot.Swerve.math.Conversions;
-import frc.robot.Swerve.util.CTREModuleState;
-import frc.robot.Swerve.util.SwerveModuleConstants;
+import frc.robot.Libs.Swerve.math.Conversions;
+import frc.robot.Libs.Swerve.util.CTREModuleState;
+import frc.robot.Libs.Swerve.util.SwerveModuleConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
