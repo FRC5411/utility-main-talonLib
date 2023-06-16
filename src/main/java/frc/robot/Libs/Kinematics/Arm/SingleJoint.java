@@ -18,7 +18,8 @@ public class SingleJoint {
         return position;
     }
 
-    // Radians
+    // Radians, returns an angle based of 2 points, even if the x,y is unreachable
+    // That is just a limitation of this type of arm
     public double inverseKinematics(double[] position) {
         double angle = Math.atan2(position[1], position[0]);
         return angle;
