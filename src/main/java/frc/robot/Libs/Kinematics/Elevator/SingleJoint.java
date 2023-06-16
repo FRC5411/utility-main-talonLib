@@ -1,57 +1,73 @@
 package frc.robot.Libs.Kinematics.Elevator;
 
 public class SingleJoint {
-    private double maxHeightMeter;
-    private double minHeightMeter;
-    private double appendLengthMeter;
-    private double appendAngleRadians;
+    private double maxLengthMeter;
+    private double tiltRadians;
 
-    // Constructor, this class is a single jointed elevator with some sort of appendage, 
-    // such as an arm or angled piece of metal
-    public SingleJoint(double maxHeightMeter, double minHeightMeter, double appendLengthMeter, double appendAngleRadians) {
-        this.maxHeightMeter = maxHeightMeter;
-        this.minHeightMeter = minHeightMeter;
-        this.appendLengthMeter = appendLengthMeter;
-        this.appendAngleRadians = appendAngleRadians;
+    // For tilt radians, the angle of the joint from the horizontal, so degrees would be on the ground
+    // and 90 degrees would be straight up
+    public SingleJoint(double maxLengthMeter, double tiltRadians) {
+        this.maxLengthMeter = maxLengthMeter;
+        this.tiltRadians = tiltRadians;
     }
 
-    // Returns the y position the elevator needs to go to based of joint details
-    public double forwardKinematics(double yMeters) {
-        double position = yMeters - (appendLengthMeter * Math.sin(appendAngleRadians));
-
-        position = Math.max(Math.min(position, maxHeightMeter), minHeightMeter);
-
-        return position - yMeters;
-    }
-
-    // Same kinematics as above, but for dynamically changing joints(moving arm)
-    public double forwardKinematics(double yMeters, double appendLengthMeter, double appendAngleRadians) {
-        double position = yMeters - (appendLengthMeter * Math.sin(appendAngleRadians));
-
-        position = Math.max(Math.min(position, maxHeightMeter), minHeightMeter);
-
-        return position - yMeters;
-    }
-
-    // Returns x, y position of the joint
-    public double[] inverseKinematics(double heightMeters) {
-        double[] position = new double[2];
-
-        position[0] = appendLengthMeter * Math.cos(appendAngleRadians);
-
-        position[1] = heightMeters + (appendLengthMeter * Math.sin(appendAngleRadians));
+    public double forwardKinematicsX(double xMeters) {
+        double position = xMeters / Math.cos(tiltRadians);
 
         return position;
     }
 
-    // Returns x, y position of the joint for dynamically changing joints(moving arm)
-    public double[] inverseKinematics(double heightMeters, double appendLengthMeter, double appendAngleRadians) {
-        double[] position = new double[2];
-
-        position[0] = appendLengthMeter * Math.cos(appendAngleRadians);
-
-        position[1] = heightMeters + (appendLengthMeter * Math.sin(appendAngleRadians));
+    public double FKXwithAppendage(double xMeters, double appendLengthMeters, double appendAngleRadians) {
+        double position = (xMeters -
+                    (appendLengthMeters * Math.cos(appendAngleRadians))) 
+                    / Math.cos(tiltRadians) ;
 
         return position;
+    }
+
+    public double forwardKinematicsY(double yMeters) {
+        double position = yMeters / Math.sin(tiltRadians);
+
+        return position;
+    }
+
+    public double FKYwithAppendage(double yMeters, double appendLengthMeters, double appendAngleRadians) {
+        double position = (yMeters -
+                    (appendLengthMeters * Math.sin(appendAngleRadians))) 
+                    / Math.sin(tiltRadians) ;
+
+        return position;
+    }
+
+    public double[] inverseKinematics(double hypotMeters) {
+        double[] position = {hypotMeters * Math.sin(tiltRadians), 
+                            hypotMeters * Math.cos(tiltRadians)};
+
+        return position;
+    }
+
+    public double[] IKwithAppendage(double hypotMeters, double appendLengthMeters, double appendAngleRadians) {
+        double[] position = {hypotMeters * Math.sin(tiltRadians) + (appendLengthMeters * Math.sin(appendAngleRadians)), 
+                            hypotMeters * Math.cos(tiltRadians) + (appendLengthMeters * Math.cos(appendAngleRadians))};
+
+        return position;
+    }
+
+    // Getters
+    public double getMaxLengthMeter() {
+        return maxLengthMeter;
+    }
+
+    public double getTiltRadians() {
+        return tiltRadians;
+    }
+
+    // Setters
+    public void setMaxLengthMeter(double maxLengthMeter) {
+        this.maxLengthMeter = maxLengthMeter;
+    }
+
+    public void setTiltRadians(double tiltRadians) {
+        this.tiltRadians = tiltRadians;
     }
 }
