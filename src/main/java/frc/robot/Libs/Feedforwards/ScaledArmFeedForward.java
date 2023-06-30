@@ -15,7 +15,6 @@ public class ScaledArmFeedForward {
   public final double kg;
   public final double kv;
   public final double ka;
-  Translation2d
 
   /**
    * Creates a new ScaledArmFeedForward with the specified gains. Units of the gain values will dictate
