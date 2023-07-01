@@ -192,6 +192,11 @@ public class SProfile {
       result.velocity = t7(t).velocity;
       result.acceleration = t7(t).acceleration;
       result.jerk = t7(t).jerk;
+    } else if (t > t7) {
+      result.position = m_goal.position;
+      result.velocity = 0;
+      result.acceleration = 0;
+      result.jerk = 0;
     }
 
     return direct(result);
