@@ -1,4 +1,4 @@
-package frc.robot.Libs;
+package frc.robot.Libs.Feedforwards;
 
 /**
  * A helper class that computes feedforward outputs for a simple elevator (modeled as a motor acting
