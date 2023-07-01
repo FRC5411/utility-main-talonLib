@@ -68,10 +68,10 @@ public class SProfile {
      * @param maxVelocity maximum velocity
      * @param maxAcceleration maximum acceleration
      */
-    public Constraints(double maxVelocity, double maxAcceleration, double maxJerk) {
+    public Constraints(double maxVelocity, double maxAcceleration, double jerkPercent) {
       this.maxVelocity = maxVelocity;
       this.maxAcceleration = maxAcceleration;
-      this.maxJerk = maxJerk;
+      this.maxJerk = maxAcceleration / ((maxVelocity/maxAcceleration) * jerkPercent);
       MathSharedStore.reportUsage(MathUsageId.kTrajectory_TrapezoidProfile, 1);
     }
   }
@@ -218,10 +218,16 @@ public class SProfile {
   public State t3(double t) {
     return new State(
       -m_constraints.maxJerk, 
-      t2(t2).acceleration - m_constraints.maxJerk * (t - t2), 
-      t2(t2).velocity + t2(t2).acceleration * (t - t2) - m_constraints.maxJerk * Math.pow(t - t2, 2), 
-      t2(t2).position + t2(t2).velocity * (t - t2) + 0.5 * t2(t2).acceleration * Math.pow((t - t2), 2) + (1/6) * -m_constraints.maxJerk * Math.pow((t - t2), 2)
+      -m_constraints.maxJerk * (t - t3), 
+      t2(t2).velocity - 0.5 * m_constraints.maxJerk * Math.pow(t - t3, 2), 
+      t2(t2).position + t3VAD(t) - t3VAD(t3)
     );
+  }
+
+  // Temp functions for code simplicity
+
+  private double t3VAD(double t) {
+    return m_constraints.maxVelocity * (t - t2) - (1/6) * m_constraints.maxJerk * Math.pow(t - t3, 3);
   }
 
   public State t4(double t) {
@@ -237,26 +243,26 @@ public class SProfile {
     return new State(
       -m_constraints.maxJerk,
       -m_constraints.maxJerk * (t - t4), 
-      t4(t4).velocity + 0.5 * m_constraints.maxJerk * Math.pow(t - t4, 2),
-      t4(t4).position + t4(t4).velocity * (t - t4) + (1/6) * -m_constraints.maxAcceleration * Math.pow(t - t4, 3)
+      t4(t4).velocity - 0.5 * m_constraints.maxJerk * Math.pow(t - t4, 2),
+      t4(t4).position + t3(t + t2 - t4).position - t2(t2).position
     );
   }
 
   public State t6(double t) {
     return new State(
       0,
-      m_constraints.maxAcceleration,
-      t5(t5).velocity - m_constraints.maxAcceleration * (t - t5),
-      t5(t5).position + t5(t5).velocity * (t - t6) + 0.5 * t5(t5).acceleration * Math.pow(t - t5, 2)
+      -m_constraints.maxAcceleration,
+      t1(t1).velocity - m_constraints.maxAcceleration * (t - t6),
+      t2(-(t - t4 - t3 )).position + t2(t2).position + t5(t).position
     );
   }
 
   public State t7(double t) {
     return new State(
       m_constraints.maxJerk,
-      t6(t6).acceleration + m_constraints.maxJerk * (t - t6),
-      t6(t6).velocity + t6(t6).acceleration * (t - t6) + 0.5 * m_constraints.maxJerk * Math.pow(t - t6, 2),
-      t6(t6).position + t6(t6).velocity * (t - t6) + 0.5 * t6(t6).acceleration * Math.pow(t - t6, 2) * (1/6) * m_constraints.maxJerk * Math.pow(t - t6, 2)
+      m_constraints.maxJerk * (t - t7),
+      0.5 * m_constraints.maxJerk * Math.pow(t - t7, 2),
+      -t1(-(t - t7)).position + t1(t1).position
     );
   }
 
