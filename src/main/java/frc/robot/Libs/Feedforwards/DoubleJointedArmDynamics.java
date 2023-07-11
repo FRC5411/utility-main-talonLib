@@ -6,11 +6,15 @@ package frc.robot.Libs.Feedforwards;
 // license that can be found in the LICENSE file at
 // the root directory of this project.
 
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.numbers.N4;
+import edu.wpi.first.math.system.NumericalIntegration;
 import edu.wpi.first.math.system.plant.DCMotor;
 
 /**
@@ -66,6 +70,50 @@ public class DoubleJointedArmDynamics {
         joint_1.motor().getVoltage(torque.get(0, 0), velocity.get(0, 0)),
         joint_2.motor().getVoltage(torque.get(1, 0), velocity.get(1, 0)));
   }
+
+  public Vector<N4> simulate(Vector<N4> state, Vector<N2> voltage, double dt) {
+    return new Vector<>(
+        NumericalIntegration.rkdp(
+            (Matrix<N4, N1> x, Matrix<N2, N1> u) -> {
+              // x = current state, u = voltages, return = state derivatives
+
+              // Get vectors from state
+              var position = VecBuilder.fill(x.get(0, 0), x.get(1, 0));
+              var velocity = VecBuilder.fill(x.get(2, 0), x.get(3, 0));
+
+              // Calculate torque
+              var shoulderTorque =
+                  joint_1
+                      .motor()
+                      .getCurrent(velocity.get(0, 0), u.get(0, 0));
+              var elbowTorque =
+                  joint_2
+                      .motor()
+                      .getCurrent(velocity.get(1, 0), u.get(1, 0));
+
+              var torque = VecBuilder.fill(shoulderTorque, elbowTorque);
+
+              // Calculate acceleration
+              var acceleration =
+                  M(position)
+                      .inv()
+                      .times(
+                          torque.minus(C(position, velocity).times(velocity)).minus(Tg(position)));
+
+              // Return state vector
+              return new MatBuilder<>(Nat.N4(), Nat.N1())
+                  .fill(
+                      velocity.get(0, 0),
+                      velocity.get(1, 0),
+                      acceleration.get(0, 0),
+                      acceleration.get(1, 0));
+            },
+            state,
+            voltage,
+            dt));
+  }
+
+
 
   private Matrix<N2, N2> M(Vector<N2> position) {
     var M = new Matrix<>(N2.instance, N2.instance);

@@ -7,11 +7,15 @@ package frc.robot.Libs.Feedforwards;
 // the root directory of this project.
 // Uses their code heavily, but adapted for a triple jointed arm
 
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.numbers.N6;
+import edu.wpi.first.math.system.NumericalIntegration;
 import edu.wpi.first.math.system.plant.DCMotor;
 
 /**
@@ -71,6 +75,54 @@ public class TripleJointedArmDynamics {
         joint_1.motor().getVoltage(torque.get(0, 0), velocity.get(0, 0)),
         joint_2.motor().getVoltage(torque.get(1, 0), velocity.get(1, 0)),
         joint_3.motor().getVoltage(torque.get(2, 0), velocity.get(2, 0)));
+  }
+
+  public Vector<N6> simulate(Vector<N6> state, Vector<N3> voltage, double dt) {
+    return new Vector<>(
+        NumericalIntegration.rkdp(
+            (Matrix<N6, N1> x, Matrix<N3, N1> u) -> {
+              // x = current state, u = voltages, return = state derivatives
+
+              // Get vectors from state
+              var position = VecBuilder.fill(x.get(0, 0), x.get(1, 0), x. get(2, 0));
+              var velocity = VecBuilder.fill(x.get(3, 0), x.get(4, 0), x.get(5, 0));
+
+              // Calculate torque
+              var shoulderTorque =
+                  joint_1
+                      .motor()
+                      .getCurrent(velocity.get(0, 0), u.get(0, 0));
+
+              var elbowTorque =
+                  joint_2
+                      .motor()
+                      .getCurrent(velocity.get(1, 0), u.get(1, 0));
+
+              var wristTorque =
+                  joint_3
+                      .motor()
+                      .getCurrent(velocity.get(2, 0), u.get(2, 0));
+
+              var torque = VecBuilder.fill(shoulderTorque, elbowTorque, wristTorque);
+
+              // Calculate acceleration
+              var acceleration =
+                  M(position)
+                      .inv()
+                      .times(
+                          torque.minus(C(position, velocity).times(velocity)).minus(Tg(position)));
+              
+              // Return state vector
+              return new MatBuilder<>(Nat.N6(), Nat.N1())
+                  .fill(
+                      velocity.get(0, 0),
+                      velocity.get(1, 0),
+                      acceleration.get(0, 0),
+                      acceleration.get(1, 0));
+            },
+            state,
+            voltage,
+            dt));
   }
 
   private Matrix<N3, N3> M(Vector<N3> position) {
