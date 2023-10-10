@@ -1,11 +1,5 @@
 package frc.robot.Libs;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenixpro.configs.MotionMagicConfigs;
-import com.ctre.phoenixpro.configs.TalonFXConfiguration;
-import com.ctre.phoenixpro.configs.TalonFXConfigurator;
-import com.ctre.phoenixpro.hardware.TalonFX;
-import com.ctre.phoenixpro.signals.InvertedValue;
-import com.ctre.phoenixpro.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -98,52 +92,4 @@ public class Configs {
 
         return motor;
     }
-
-    
-
-   public static TalonFX ProDriveFX(TalonFX motor, double DRIVE_kP, double DRIVE_kS, InvertedValue invert) {
-       TalonFXConfigurator configer = motor.getConfigurator();
-       TalonFXConfiguration config = new TalonFXConfiguration();
-
-       config.Slot0.kP = DRIVE_kP;
-       config.Slot0.kS = DRIVE_kS;
-       config.CurrentLimits.StatorCurrentLimitEnable = true;
-       config.CurrentLimits.StatorCurrentLimit = 60;
-       config.Voltage.PeakForwardVoltage = 12;
-       config.Voltage.PeakReverseVoltage = -12;
-       config.MotorOutput.Inverted = invert;
-       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-       configer.apply(config.Slot0);
-       configer.apply(config.CurrentLimits);
-       configer.apply(config.Voltage);
-       configer.apply(config.MotorOutput);
-       configer.apply(config.MotionMagic);
-
-       return motor;
-   }
-
-   public static TalonFX ProAzimuthFX(TalonFX motor, double DRIVE_kP, double DRIVE_kD, double DRIVE_kS,
-           InvertedValue invert, MotionMagicConfigs profile) {
-       TalonFXConfigurator configer = motor.getConfigurator();
-       TalonFXConfiguration config = new TalonFXConfiguration();
-
-       config.Slot0.kP = DRIVE_kP;
-       config.Slot0.kS = DRIVE_kS;
-       config.CurrentLimits.StatorCurrentLimitEnable = true;
-       config.CurrentLimits.StatorCurrentLimit = 60;
-       config.Voltage.PeakForwardVoltage = 12;
-       config.Voltage.PeakReverseVoltage = -12;
-       config.MotorOutput.Inverted = invert;
-       config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-       config.MotionMagic = profile;
-
-       configer.apply(config.Slot0);
-       configer.apply(config.CurrentLimits);
-       configer.apply(config.Voltage);
-       configer.apply(config.MotorOutput);
-       configer.apply(config.MotionMagic);
-
-       return motor;
-   }
 }
