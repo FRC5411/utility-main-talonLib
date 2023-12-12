@@ -9,9 +9,8 @@ plugins {
 apply plugin: 'edu.wpi.first.GradleRIO'
 
 project.setGroup('org.talonalliance') //TODO: Confirm group name
-project.setVersion('1.0.0-SNAPSHOT')
+project.setVersion('1.0.0-SNAPSHOT') 
 
-project.version = '1.0.0' 
 repositories {
     mavenCentral()
 }
