@@ -9,7 +9,7 @@ plugins {
 apply plugin: 'edu.wpi.first.GradleRIO'
 
 project.setGroup('org.talonrobotics')
-project.setVersion('1.0.0-SNAPSHOT') 
+project.setVersion('2024.1.0') 
 
 repositories {
     mavenCentral()
